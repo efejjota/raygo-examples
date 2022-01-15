@@ -19,4 +19,15 @@ jobs:
         sudo apt-get update -y; sudo apt-get -y install libxi-dev libxinerama-dev libxcursor-dev libxrandr-dev libgl1-mesa-dev
       if: runner.os == 'Linux'
     - name: Build
-      run: go build -o release/ ./...
+      run: go build -o release/ -ldflags="-s -w" ./...
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: true
+        files: |
+          ./release/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
